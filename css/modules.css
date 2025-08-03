@@ -1,0 +1,486 @@
+/* Module-specific styles for LSC Learning Platform */
+
+/* Module Cards */
+.module-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    background: white;
+}
+
+.module-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.module-card:hover::before {
+    opacity: 1;
+}
+
+.module-card:hover {
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.module-card .card-body {
+    position: relative;
+    z-index: 2;
+    padding: 2rem;
+}
+
+.module-icon {
+    transition: all 0.4s ease;
+    margin-bottom: 1.5rem;
+}
+
+.module-card:hover .module-icon {
+    transform: scale(1.2) rotate(5deg);
+}
+
+.module-card:hover .module-icon i {
+    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Module-specific colors */
+.module-card[data-module="alphabet"] {
+    border-left: 5px solid var(--primary-color);
+}
+
+.module-card[data-module="numbers"] {
+    border-left: 5px solid var(--success-color);
+}
+
+.module-card[data-module="words"] {
+    border-left: 5px solid var(--warning-color);
+}
+.module-card[data-module="colors"] {
+    border-left: 5px solid var(--warning-color);
+}
+
+.module-card[data-module="phrases"] {
+    border-left: 5px solid var(--info-color);
+}
+
+/* Progress Bars */
+.progress {
+    height: 10px;
+    border-radius: 10px;
+    background-color: #e9ecef;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+    border-radius: 10px;
+    transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(45deg, 
+        transparent 35%, 
+        rgba(255, 255, 255, 0.3) 50%, 
+        transparent 65%);
+    animation: shimmer 2s infinite;
+}
+ .btn.primary {
+    background-color: var(--primary);
+    color: rgb(53, 53, 202);
+  }
+  
+ 
+  .btn.danger {
+    background-color: var(--danger);
+    color: rgba(223, 23, 23, 0.9);
+  }
+  
+
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Lesson Content Styles */
+.lesson-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.lesson-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+}
+
+.lesson-number {
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+
+.lesson-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+}
+
+.lesson-progress {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+/* Sign Display */
+.sign-display-container {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.sign-display-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(13, 110, 253, 0.05) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.sign-display {
+    font-size: 8rem;
+    margin: 1rem 0;
+    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.sign-letter {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.sign-description {
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Practice Section */
+.practice-section {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 15px;
+    margin: 2rem 0;
+}
+
+.practice-tips {
+    margin-top: 1rem;
+}
+
+.practice-tips .alert {
+    border: none;
+    border-radius: 10px;
+    border-left: 4px solid;
+}
+
+/* Quiz Styles */
+.quiz-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+}
+
+.quiz-question {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    color: var(--dark-color);
+    text-align: center;
+}
+
+.quiz-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.quiz-option {
+    padding: 1.5rem;
+    border: 2px solid #dee2e6;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    text-align: center;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+}
+
+.quiz-option::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s;
+}
+
+.quiz-option:hover::before {
+    left: 100%;
+}
+
+.quiz-option:hover {
+    border-color: var(--primary-color);
+    background: #f8f9fa;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-option.correct {
+    border-color: var(--success-color);
+    background: #d1e7dd;
+    color: var(--success-color);
+    animation: correctAnswer 0.6s ease;
+}
+
+.quiz-option.incorrect {
+    border-color: #dc3545;
+    background: #f8d7da;
+    color: #dc3545;
+    animation: incorrectAnswer 0.6s ease;
+}
+
+@keyframes correctAnswer {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes incorrectAnswer {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+    100% { transform: translateX(0); }
+}
+
+.quiz-feedback {
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-top: 1rem;
+    font-weight: bold;
+    text-align: center;
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.quiz-feedback.correct {
+    background: #d1e7dd;
+    color: var(--success-color);
+    border: 2px solid var(--success-color);
+}
+
+.quiz-feedback.incorrect {
+    background: #f8d7da;
+    color: #dc3545;
+    border: 2px solid #dc3545;
+}
+
+/* Navigation Buttons */
+.lesson-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 15px;
+}
+
+.nav-btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-prev {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn-next {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Completion Screen */
+.completion-screen {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    border-radius: 20px;
+    margin: 2rem 0;
+}
+
+.completion-icon {
+    margin-bottom: 2rem;
+    animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.completion-stats {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design for Modules */
+@media (max-width: 768px) {
+    .lesson-container {
+        padding: 1rem;
+    }
+    
+    .sign-display {
+        font-size: 5rem;
+    }
+    
+    .sign-letter {
+        font-size: 2rem;
+    }
+    
+    .quiz-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .quiz-option {
+        padding: 1rem;
+    }
+    
+    .lesson-navigation {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .nav-btn {
+        width: 100%;
+    }
+    
+}
+
+@media (max-width: 576px) {
+    .sign-display {
+        font-size: 4rem;
+    }
+    
+    .quiz-question {
+        font-size: 1.2rem;
+    }
+    
+    .module-card .card-body {
+        padding: 1.5rem;
+    }
+
+    
+}
