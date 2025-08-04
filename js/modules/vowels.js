@@ -128,7 +128,8 @@ function loadLesson(lessonIndex) {
             formData.append("image", blob, "captured_frame.jpg");
 
             try {
-                const response = await fetch("https://28371462829d.ngrok-free.app/api/translate", {
+               
+                 const response = await fetch(`https://28371462829d.ngrok-free.app/api/translate?sid=${window.currentSID}`, {
                     method: "POST",
                     body: formData
                 });
@@ -144,6 +145,15 @@ function loadLesson(lessonIndex) {
     }
 
     const socket = io("https://28371462829d.ngrok-free.app");
+
+    socket.on('connect', () => {
+        const sid = socket.id;
+        console.log("Conectado con SID:", sid);
+
+        // Guarda el SID globalmente para que esté disponible cuando envíes la imagen
+        window.currentSID = sid;
+    });
+
 
     let isCelebrating = false;
 
