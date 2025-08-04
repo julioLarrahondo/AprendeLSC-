@@ -31,6 +31,13 @@ function loadLesson(lessonIndex) {
         showCompletionScreen();
         return;
     }
+    socket.on('connect', () => {
+        const sid = socket.id;
+        console.log("Conectado con SID:", sid);
+
+        // Guarda el SID globalmente para que esté disponible cuando envíes la imagen
+        window.currentSID = sid;
+    });
 
     const lesson = alphabetData[lessonIndex];
     const lessonContent = document.getElementById('lessonContent');
@@ -109,7 +116,7 @@ function loadLesson(lessonIndex) {
     }
 
     function captureFrame() {
-        if (!stream) return;
+        if (!stream || !window.currentSID) return;  
         isProcessing = true;
 
         const video = videoStream;
@@ -146,13 +153,9 @@ function loadLesson(lessonIndex) {
 
     const socket = io("https://28371462829d.ngrok-free.app");
 
-    socket.on('connect', () => {
-        const sid = socket.id;
-        console.log("Conectado con SID:", sid);
+    
 
-        // Guarda el SID globalmente para que esté disponible cuando envíes la imagen
-        window.currentSID = sid;
-    });
+    
 
 
     let isCelebrating = false;
