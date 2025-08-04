@@ -1,4 +1,4 @@
-// Alphabet module for LSC Learning Platform
+// Módulo del alfabeto para la plataforma Aprende LSC
 
 const alphabetData = [
     { letter: 'A', sign: '✊', description: 'Cierra tu mano como si fueras a hacer un puño, pero deja el dedo gordo (pulgar) estirado hacia adelante.', tip: 'Asegúrate de que los otros dedos estén bien cerrados.' },
@@ -12,6 +12,7 @@ const clapAudio = new Audio("../assets/audio/celebartion_mario.mp3");
 clapAudio.volume = 0.8;
 
 let currentLesson = 0;
+let socket = null;
 
 // Variables globales para cámara
 let stream = null;
@@ -20,24 +21,73 @@ let isProcessing = false;
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
-// Esperar que el DOM esté listo
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
+    initSocket();
     loadLesson(currentLesson);
     updateNavigation();
 });
 
+function initSocket() {
+    socket = io("https://28371462829d.ngrok-free.app");
+
+    socket.on('connect', () => {
+        console.log("Conectado con SID:", socket.id);
+        window.currentSID = socket.id;
+    });
+
+    let isCelebrating = false;
+
+    socket.on('nueva_letra', (data) => {
+        const { letra } = data;
+        const expectedLetter = alphabetData[currentLesson]?.letter;
+
+        if (!isCelebrating && letra?.toUpperCase() === expectedLetter) {
+            isCelebrating = true;
+
+            confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+            clapAudio.play();
+
+            showCelebration("¡Correcto! 🎉");
+
+            setTimeout(() => {
+                if (currentLesson < alphabetData.length - 1) {
+                    currentLesson++;
+                    loadLesson(currentLesson);
+                    updateNavigation();
+                    isCelebrating = false;
+                } else {
+                    showCelebration("🎓 ¡Felicidades! Has completado todas las lecciones.");
+                    setTimeout(() => window.close(), 5000);
+                }
+            }, 2000);
+        }
+    });
+}
+
+function showCelebration(message) {
+    const celebration = document.createElement('div');
+    celebration.innerHTML = `<div class="celebration-message">${message}</div>`;
+    Object.assign(celebration.style, {
+        position: 'fixed',
+        top: '40%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        fontSize: '2rem',
+        background: 'rgba(255,255,255,0.95)',
+        padding: '1rem 2rem',
+        borderRadius: '10px',
+        boxShadow: '0 0 10px rgba(0,0,0,0.3)',
+        zIndex: 9999
+    });
+    document.body.appendChild(celebration);
+    setTimeout(() => document.body.removeChild(celebration), 1500);
+}
+
 function loadLesson(lessonIndex) {
     if (lessonIndex >= alphabetData.length) {
-        showCompletionScreen();
+        showCelebration("🎓 ¡Felicidades! Has terminado todas las lecciones.");
         return;
     }
-    socket.on('connect', () => {
-        const sid = socket.id;
-        console.log("Conectado con SID:", sid);
-
-        // Guarda el SID globalmente para que esté disponible cuando envíes la imagen
-        window.currentSID = sid;
-    });
 
     const lesson = alphabetData[lessonIndex];
     const lessonContent = document.getElementById('lessonContent');
@@ -81,146 +131,7 @@ function loadLesson(lessonIndex) {
         </div>
     `;
 
-    const startCameraButton = document.getElementById("startCamera");
-    const stopCameraButton = document.getElementById("stopCamera");
-    const videoStream = document.getElementById("videoStream");
-
-    startCameraButton.addEventListener("click", async () => {
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            videoStream.srcObject = stream;
-            videoStream.style.display = "block";
-            startCameraButton.disabled = true;
-            stopCameraButton.disabled = false;
-
-            captureInterval = setInterval(() => {
-                if (!isProcessing) captureFrame();
-            }, 500);
-        } catch (error) {
-            console.error("Error al acceder a la cámara:", error);
-        }
-    });
-
-    stopCameraButton.addEventListener("click", () => stopCamera());
-
-    function stopCamera() {
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-            videoStream.srcObject = null;
-            stream = null;
-        }
-        clearInterval(captureInterval);
-        startCameraButton.disabled = false;
-        stopCameraButton.disabled = true;
-        videoStream.style.display = "none";
-    }
-
-    function captureFrame() {
-        if (!stream || !window.currentSID) return;  
-        isProcessing = true;
-
-        const video = videoStream;
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        canvas.toBlob(async (blob) => {
-            if (!blob) {
-                console.error("No se pudo convertir el canvas a blob");
-                isProcessing = false;
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("image", blob, "captured_frame.jpg");
-
-            try {
-               
-                 const response = await fetch(`https://28371462829d.ngrok-free.app/api/translate?sid=${window.currentSID}`, {
-                    method: "POST",
-                    body: formData
-                });
-
-                const result = await response.json();
-                console.log("Respuesta del servidor:", result);
-            } catch (error) {
-                console.error("Error al enviar la imagen al servidor:", error);
-            } finally {
-                isProcessing = false;
-            }
-        }, "image/jpeg");
-    }
-
-    const socket = io("https://28371462829d.ngrok-free.app");
-
-    
-
-    
-
-
-    let isCelebrating = false;
-
-    socket.on('nueva_letra', (data) => {
-        const { letra, frase } = data;
-        const expectedLetter = alphabetData[currentLesson]?.letter;
-
-        if (!isCelebrating && letra?.toUpperCase() === expectedLetter) {
-            isCelebrating = true;
-
-            confetti({
-                particleCount: 150,
-                spread: 100,
-                origin: { y: 0.6 }
-            });
-
-            clapAudio.play();
-
-            const celebration = document.createElement('div');
-            celebration.innerHTML = `<div class="celebration-message">¡Correcto! 🎉</div>`;
-            celebration.style.position = 'fixed';
-            celebration.style.top = '40%';
-            celebration.style.left = '50%';
-            celebration.style.transform = 'translate(-50%, -50%)';
-            celebration.style.fontSize = '2rem';
-            celebration.style.background = 'rgba(255,255,255,0.9)';
-            celebration.style.padding = '1rem 2rem';
-            celebration.style.borderRadius = '10px';
-            celebration.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
-            document.body.appendChild(celebration);
-
-            setTimeout(() => {
-                document.body.removeChild(celebration);
-            }, 1500);
-
-            setTimeout(() => {
-                if (currentLesson < alphabetData.length - 1) {
-                    currentLesson++;
-                    loadLesson(currentLesson);
-                    updateNavigation();
-                    isCelebrating = false;
-                } else {
-                    const finalMessage = document.createElement('div');
-                    finalMessage.innerHTML = `<div class="celebration-message">🎓 ¡Felicidades! Has terminado la lección. Avanzas a la siguiente. 🎉</div>`;
-                    finalMessage.style.position = 'fixed';
-                    finalMessage.style.top = '40%';
-                    finalMessage.style.left = '50%';
-                    finalMessage.style.transform = 'translate(-50%, -50%)';
-                    finalMessage.style.fontSize = '2rem';
-                    finalMessage.style.background = 'rgba(255,255,255,0.95)';
-                    finalMessage.style.padding = '1rem 2rem';
-                    finalMessage.style.borderRadius = '10px';
-                    finalMessage.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
-                    document.body.appendChild(finalMessage);
-
-                    setTimeout(() => {
-                        document.body.removeChild(finalMessage);
-                        window.close();
-                    }, 5000);
-                }
-            }, 2000);
-        }
-
-    });
+    setupCameraControls();
 
     document.getElementById('lessonNumber').textContent = `Lección ${lessonIndex + 1} de ${alphabetData.length}`;
     document.getElementById('currentLessonInfo').textContent = `Letra ${lesson.letter}`;
@@ -228,4 +139,72 @@ function loadLesson(lessonIndex) {
 
     gsap.from('.sign-display-container', { duration: 0.8, scale: 0.8, opacity: 0, ease: "back.out(1.7)" });
     gsap.from('.practice-section', { duration: 0.6, y: 30, opacity: 0, delay: 0.3, ease: "power2.out" });
+}
+
+function setupCameraControls() {
+    const startButton = document.getElementById("startCamera");
+    const stopButton = document.getElementById("stopCamera");
+    const video = document.getElementById("videoStream");
+
+    startButton.addEventListener("click", async () => {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            video.style.display = "block";
+            startButton.disabled = true;
+            stopButton.disabled = false;
+
+            captureInterval = setInterval(() => {
+                if (!isProcessing) captureFrame(video);
+            }, 500);
+        } catch (error) {
+            console.error("Error al acceder a la cámara:", error);
+        }
+    });
+
+    stopButton.addEventListener("click", () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            video.srcObject = null;
+            stream = null;
+        }
+        clearInterval(captureInterval);
+        startButton.disabled = false;
+        stopButton.disabled = true;
+        video.style.display = "none";
+    });
+}
+
+function captureFrame(video) {
+    if (!stream || !window.currentSID) return;
+    isProcessing = true;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(async (blob) => {
+        if (!blob) {
+            console.error("No se pudo convertir el canvas a blob");
+            isProcessing = false;
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("image", blob, "captured_frame.jpg");
+
+        try {
+            const response = await fetch(`https://28371462829d.ngrok-free.app/api/translate?sid=${window.currentSID}`, {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            console.log("Respuesta del servidor:", result);
+        } catch (error) {
+            console.error("Error al enviar la imagen al servidor:", error);
+        } finally {
+            isProcessing = false;
+        }
+    }, "image/jpeg");
 }
