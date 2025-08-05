@@ -214,6 +214,7 @@ function loadLesson(lessonIndex) {
         }
 
     });
+    document.getElementById('serverResponse').value = frase;
 
     document.getElementById('lessonNumber').textContent = `Lección ${lessonIndex + 1} de ${colorData.length}`;
     document.getElementById('currentLessonInfo').textContent = `Letra ${lesson.color}`;
