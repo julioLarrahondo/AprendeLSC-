@@ -128,7 +128,7 @@ function loadLesson(lessonIndex) {
             formData.append("image", blob, "captured_frame.jpg");
 
             try {
-                const response = await fetch("https://28371462829d.ngrok-free.app/api/translate", {
+                const response = await fetch("https://5b8f1f236782.ngrok-free.app/api/translate", {
                     method: "POST",
                     body: formData
                 });
@@ -143,7 +143,7 @@ function loadLesson(lessonIndex) {
         }, "image/jpeg");
     }
 
-    const socket = io("https://28371462829d.ngrok-free.app");
+    const socket = io("https://5b8f1f236782.ngrok-free.app");
 
     let isCelebrating = false;
 
