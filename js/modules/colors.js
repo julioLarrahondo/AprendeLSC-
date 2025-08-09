@@ -147,7 +147,40 @@ function loadLesson(lessonIndex) {
         }, "image/jpeg");
     }
 
-    const socket = io("https://lsc-colores.onrender.com");
+    // Conexión al servidor con reconexión automática
+const socket = io("https://lsc-colores.onrender.com", {
+    reconnection: true,         // Habilita reconexión
+    reconnectionAttempts: 10,   // Máximo de intentos
+    reconnectionDelay: 2000,    // Tiempo entre intentos (ms)
+    reconnectionDelayMax: 5000, // Máximo tiempo entre intentos
+    timeout: 20000              // Tiempo máximo para conectar
+});
+
+// Eventos de conexión y reconexión
+        socket.on("connect", () => {
+            console.log("✅ Conectado al servidor Render:", socket.id);
+        });
+
+        socket.on("disconnect", (reason) => {
+            console.warn("⚠️ Desconectado del servidor:", reason);
+        });
+
+        socket.on("connect_error", (error) => {
+            console.error("❌ Error de conexión:", error.message);
+        });
+
+        socket.on("reconnect_attempt", (attempt) => {
+            console.log(`🔄 Intentando reconexión... (Intento ${attempt})`);
+        });
+
+        socket.on("reconnect", (attempt) => {
+            console.log(`✅ Reconectado al servidor después de ${attempt} intentos`);
+        });
+
+        socket.on("reconnect_failed", () => {
+            console.error("🚫 No se pudo reconectar al servidor");
+        });
+
 
     let isCelebrating = false;
 
