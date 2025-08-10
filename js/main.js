@@ -173,6 +173,8 @@ function createModuleCard(moduleKey, config, progress) {
     return card;
 }
 
+// ... Todo tu código original arriba ...
+
 function openModule(moduleName) {
     const modal = new bootstrap.Modal(document.getElementById('moduleModal'));
     const modalTitle = document.getElementById('moduleModalTitle');
@@ -183,7 +185,7 @@ function openModule(moduleName) {
     
     modal.show();
     
-    // Animate modal
+    // Animación
     gsap.from('.modal-content', {
         duration: 0.5,
         scale: 0.8,
@@ -191,6 +193,22 @@ function openModule(moduleName) {
         ease: "back.out(1.7)"
     });
 }
+
+// Evento para detener cámara al cerrar el modal
+document.getElementById('moduleModal').addEventListener('hidden.bs.modal', function () {
+    const moduleFrame = document.getElementById('moduleFrame');
+
+    // Avisar al iframe que debe detener la cámara
+    if (moduleFrame.contentWindow) {
+        moduleFrame.contentWindow.postMessage({ type: 'stopCamera' }, '*');
+    }
+
+    // Limpia el src para liberar recursos
+    moduleFrame.src = '';
+});
+
+// ... El resto de tu código original abajo ...
+
 
 function updateUI() {
     // Update navbar
