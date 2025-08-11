@@ -17,6 +17,8 @@
     box-sizing: border-box;
 }
 
+
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding-top: 76px;
@@ -41,7 +43,17 @@ body {
     color: white;
     position: relative;
     overflow: hidden;
-    min-height: 100vh;
+    height: 70vh;        /* ocupa solo el 70% de la pantalla */
+    display: flex;       /* para centrar verticalmente el contenido */
+    align-items: center; /* centra vertical */
+    justify-content: center; /* opcional: centra horizontal */
+}
+/* Ajuste para pantallas pequeñas */
+@media (max-width: 200px) {
+    .hero-section {
+        min-height: auto;    /* crece según contenido */
+        padding: 3rem 1rem;  /* más espacio en vertical */
+    }
 }
 
 .hero-section::before {
@@ -309,3 +321,19 @@ section {
 ::-webkit-scrollbar-thumb:hover {
     background: #0056b3;
 }
+
+#btnInicio{
+z-index: 1000; 
+position: absolute;    
+}
+
+.logo-img {
+    max-height: 100px; /* Altura máxima para mantener tamaño aceptable */
+    object-fit: contain; /* Ajusta proporción sin deformar */
+
+}
+
+.nav-link {
+    color: white !important;
+}
+

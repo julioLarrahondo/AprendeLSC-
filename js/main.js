@@ -34,7 +34,7 @@ const moduleConfigs = {
         name: 'Alfabeto LSC',
         icon: 'fas fa-font',
         color: 'primary',
-        description: 'Aprende las 27 letras del alfabeto en LSC',
+        description: 'Aprende las 27 letras del alfabeto',
         totalLessons: 26
     },
     
@@ -43,7 +43,7 @@ const moduleConfigs = {
         name: 'Animales',
         icon: 'fas fa-dog', 
         color: 'success',
-        description: 'Aprende los nombres de animales en LSC',
+        description: 'Aprende los nombres de animales',
         totalLessons: 4
     },
     
@@ -73,7 +73,7 @@ const moduleConfigs = {
         icon: 'fas fa-comment',
         color: 'warning',
         description: 'Vocabulario esencial para comunicarte',
-        totalLessons: 10
+        totalLessons: 5
     },
 
          
@@ -393,13 +393,19 @@ function initializeSmoothScrolling() {
 }
 
 function startLearning() {
+    // Hacer visibles todos los módulos antes de animar
+    document.querySelectorAll('.module-card').forEach(el => {
+        el.style.opacity = 1;
+        el.style.transform = 'scale(1)';
+    });
+
     gsap.to(window, {
-        duration: 1,
+        duration: 0.5,
         scrollTo: "#modules",
         ease: "power2.inOut"
     });
-    
-    // Animate module cards
+
+    // Animar desde un estado inicial sin ocultar permanentemente
     gsap.from('.module-card', {
         duration: 0.8,
         scale: 0.8,
@@ -523,8 +529,9 @@ function completeLesson(moduleName, lessonIndex) {
 
 function showModuleCompletion(moduleName) {
     const moduleNames = {
-        vowels: 'vocales',
         alphabet: 'Alfabeto',
+        vowels: 'vocales',
+        
         numbers: 'Números',
         animals:'Animales',
         words: 'Palabras Básicas',
